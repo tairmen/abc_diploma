@@ -5,11 +5,13 @@ import random
 
 class ArtificialBeeColony:
 
-    def __init__(self, clf, features, data, test_data, modification_rate):
+    def __init__(self, clf, features, X_train, X_test, y_train, y_test, modification_rate):
         self.food_sources = np.array([])
         self.features = features.copy()
-        self.data = data.copy()
-        self.test_data = test_data.copy()
+        self.data = X_train.copy()
+        self.test_data = X_test.copy()
+        self.y_data = y_train.copy()
+        self.y_test_data = y_test.copy()
         self.fitness = 0.0
         self.fitnesses = np.array([])
         self.modification_rate = modification_rate
@@ -21,14 +23,14 @@ class ArtificialBeeColony:
         for i in range(food_source_num):
             self.food_sources = np.append(self.food_sources, np.array([[1 if j == i % food_source_size else 0 for j in range(food_source_size)]]), axis=0)
 
-    def execute(self, train_data, train_labels, test_data, test_labels, cycle, target):
-        self.initialize_food_source(len(train_data.columns), len(train_data))
+    def execute(self, cycle, target):
+        self.initialize_food_source(len(self.features), len(self.data))
 
-        best_food_source = np.array([random.choice((0, 1)) for _ in range(len(train_data.columns))])
+        best_food_source = np.array([random.choice((0, 1)) for _ in range(len(self.features))])
         for _ in range(cycle):
             employed_bees = np.array([])
             for food_source in self.food_sources:
-                employed_bees = np.append(employed_bees, EmployedBee(self.clf, train_data, train_labels, test_data, test_labels, food_source, self.modification_rate))
+                employed_bees = np.append(employed_bees, EmployedBee(self.clf, self.data, self.y_data, self.test_data, self.y_test_data, food_source, self.modification_rate))
 
             onlooker_bees = OnlookerBee(employed_bees)
             onlooker_bees.evaluates_nectar()
