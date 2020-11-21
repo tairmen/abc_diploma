@@ -67,17 +67,19 @@ def run_cart_abc(path, test_size):
     df = load(path)
     features, labels = get_features_labels(df)
     X_train, X_test, y_train, y_test = get_train_test_data(features, labels, test_size)
-    y_test_binarized = class_binarize(y_test, [1, 2])
+    # y_test_binarized = class_binarize(y_test, [1, 2])
     clf = DecisionTreeClassifier()
     clf = train_cart(clf, X_train, y_train)
-    n_classes = y_test_binarized.shape[1]
+    # n_classes = y_test_binarized.shape[1]
     y_pred = test_cart(clf, X_test)
-    y_pred_binarized = class_binarize(y_pred, [1, 2])
+    # y_pred_binarized = class_binarize(y_pred, [1, 2])
     score = get_score(clf, X_test, y_test)
     modification_rate = 0.3
-    cycle = 10
+    cycle = 1
     abc = ArtificialBeeColony(clf, X_train.columns, X_train, X_test, y_train, y_test, modification_rate)
     accuracy, selected_features, bee, _ = abc.execute(cycle, score)
+    print(score)
+    print(clf.classes_)
     print(accuracy)
     print(reports(y_test, bee.get_y_pred()))
 

@@ -4,14 +4,14 @@ import random
 
 class EmployedBee:
 
-    def __init__(self, clf, dataset, labels, test_data, test_labels, starter_food_source, modification_rate):
+    def __init__(self, clf, features, dataset, labels, test_data, test_labels, starter_food_source, modification_rate):
         self.current_limit = 0
         self.MAX_LIMIT = 3
         self.dataset = dataset
         self.labels = labels
         self.test_data = test_data
         self.test_labels = test_labels
-        self.features = self.dataset.columns
+        self.features = features
         self.current_food_source = starter_food_source
         self.modification_rate = modification_rate
         self.clf = clf
