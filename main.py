@@ -15,8 +15,9 @@ parser.add_argument('-cycle', '-c') # unsigned integer for -m cart-abc
 args = parser.parse_args()
 models = args.models
 validation = args.validation
-file = args.file
-test_size = float(args.test_size)
+if args.file:
+    file = args.file
+test_size = float(0 if args.test_size == None else args.test_size)
 n_splits = int(0 if args.n_splits == None else args.n_splits)
 modification_rate = float(0.0 if args.modification_rate == None else args.modification_rate)
 cycle = int(0 if args.cycle == None else args.cycle)
@@ -31,7 +32,7 @@ True Positive Rate (TPR) = Sensitivity = Recall
 True Negative Rate (TNR) = 1 - FPR = Specificity
 """
 
-from helpers.models import run_cart, run_cart_kfold, run_cart_abc
+from helpers.models import run_cart, run_cart_kfold, run_cart_abc, run_compare, run_iris_compare, run_digits_compare, run_wine_compare, run_breast_cancer_compare
 
 if models == 'cart':
     if validation == 'split':
@@ -42,3 +43,18 @@ if models == 'cart':
 elif models == 'cart-abc':
     if validation == 'split':
         run_cart_abc(f'data/{file}', test_size)
+
+elif models == 'compare':
+    run_compare(f'data/{file}')
+
+elif models == 'compare-iris':
+    run_iris_compare()
+
+elif models == 'compare-digits':
+    run_digits_compare()
+
+elif models == 'compare-wine':
+    run_wine_compare()
+    
+elif models == 'compare-breast-cancer':
+    run_breast_cancer_compare()

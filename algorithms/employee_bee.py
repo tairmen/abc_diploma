@@ -4,9 +4,9 @@ import random
 
 class EmployedBee:
 
-    def __init__(self, clf, features, dataset, labels, test_data, test_labels, starter_food_source, modification_rate):
+    def __init__(self, clf, features, dataset, labels, test_data, test_labels, starter_food_source, modification_rate, MAX_LIMIT):
         self.current_limit = 0
-        self.MAX_LIMIT = 3
+        self.MAX_LIMIT = MAX_LIMIT
         self.dataset = dataset
         self.labels = labels
         self.test_data = test_data
@@ -27,7 +27,11 @@ class EmployedBee:
             self.test_labels.to_numpy(), self.y_pred)
 
     def calculate_fitness(self):
-        neighbor = [(1 if random.uniform(0, 1) < self.modification_rate else bit) for bit in self.current_food_source]
+        neighbor = [(not bit if random.uniform(0, 1) < self.modification_rate else bit) for bit in self.current_food_source]
+        if (sum(neighbor) == 0):
+            rand_index = random.randrange(0, len(neighbor))
+            neighbor[rand_index] = 1
+
         selected_features = [f for i, f in enumerate(
             self.features) if neighbor[i] == 1]
 

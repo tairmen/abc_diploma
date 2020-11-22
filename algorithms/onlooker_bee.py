@@ -47,5 +47,6 @@ class OnlookerBee:
         num_of_dist = len(self.bees_distribution)
 
         for i in range(len(self.employed_bees)):
-            self.employed_bees[i] = self.bees_distribution[random.randrange(
-                0, num_of_dist - 1)]
+            if num_of_dist > 1:
+                self.employed_bees[i] = self.bees_distribution[random.randrange(
+                    0, num_of_dist - 1)]
