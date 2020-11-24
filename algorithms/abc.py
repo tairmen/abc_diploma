@@ -19,6 +19,7 @@ class ArtificialBeeColony:
         self.features_bounds = np.array([[self.test_data.iloc[:, i].min(axis=0), self.test_data.iloc[:, i].max(axis=0)] for i in range(len(self.features))])
         self.food_sources_num = food_sources_num
         self.clf = clf
+        print("Init ArtificialBeeColony")
 
     def initialize_food_source(self, food_source_size, food_source_num):
         self.food_sources = np.empty((0, food_source_size), np.int)
@@ -29,19 +30,27 @@ class ArtificialBeeColony:
         self.initialize_food_source(len(self.features), self.food_sources_num)
 
         best_food_source = np.array([random.choice((0, 1)) for _ in range(len(self.features))])
-        for _ in range(cycle):
-            employed_bees = np.array([])
-            food_source_counter = 0
-            for food_source in self.food_sources:
-                employed_bees = np.append(employed_bees, EmployedBee(self.clf, self.features, self.data, self.labels, self.test_data, self.test_labels, food_source, self.modification_rate, max_limit))
-                food_source_counter+=1
 
+        employed_bees = np.array([])
+        food_source_counter = 0
+        for food_source in self.food_sources:
+            employed_bees = np.append(employed_bees, EmployedBee(self.clf, self.features, self.data, self.labels, self.test_data, self.test_labels, food_source, self.modification_rate, max_limit))
+            food_source_counter+=1
+            
+        print(f'Created {len(employed_bees)} employed_bees')
+    
+        for _ in range(cycle):
+            
+            print('Evaluates nectar start')
             onlooker_bees = OnlookerBee(employed_bees)
+            print('Evaluates nectar end')
             onlooker_bees.evaluates_nectar()
-            # print(f'evaluates_nectar: {_}')
+            
             self.fitness = onlooker_bees.get_best_fitness()
+            print(f'Best fitness {self.fitness}')
             self.fitnesses = np.append(self.fitnesses, self.fitness)
             best_food_source = onlooker_bees.get_best_food_source()
+            print(f'Best food source {best_food_source}')
             self.selected_features = [f for i, f in enumerate(self.features) if best_food_source[i] == 1]
 
             # print(best_food_source)
@@ -49,4 +58,4 @@ class ArtificialBeeColony:
             # if self.fitness >= target:
             #     return self.fitness, self.selected_features, onlooker_bees.get_best_employed_bee(), self.fitnesses
 
-        return self.fitness, self.selected_features, onlooker_bees.get_best_employed_bee(), self.fitnesses
+        return np.max(self.fitnesses), self.selected_features, onlooker_bees.get_best_employed_bee(), self.fitnesses

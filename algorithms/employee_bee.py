@@ -27,7 +27,7 @@ class EmployedBee:
             self.test_labels.to_numpy(), self.y_pred)
 
     def calculate_fitness(self):
-        neighbor = [(not bit if random.uniform(0, 1) < self.modification_rate else bit) for bit in self.current_food_source]
+        neighbor = [(int(not bit) if random.uniform(0, 1) < self.modification_rate else bit) for bit in self.current_food_source]
         if (sum(neighbor) == 0):
             rand_index = random.randrange(0, len(neighbor))
             neighbor[rand_index] = 1
@@ -49,8 +49,7 @@ class EmployedBee:
                 self.calculate_fitness()
             else:
                 self.current_limit = 0
-                self.current_food_source = np.array(
-                    [random.choice((0, 1)) for _ in range(len(self.current_food_source))])
+                self.current_food_source = [random.choice((0, 1)) for _ in range(len(self.current_food_source))]
 
     def get_y_pred(self):
         return self.y_pred

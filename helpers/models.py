@@ -88,11 +88,11 @@ def run_cart_abc(path, t_s):
         y_pred = test_cart(clf, X_test)
         # y_pred_binarized = class_binarize(y_pred, [1, 2])
         score = get_score(clf, X_test, y_test)
-        modification_rate = 0.3
+        modification_rate = 0.85
         max_limit = 3
         cycle = 2
-        food_num = int(len(X_train) / 10)
-        abc = ArtificialBeeColony(clf, X_train.columns, X_train, X_test, y_train, y_test, modification_rate, features.iloc[test], food_num)
+        food_num = int(len(X_train) / 30)
+        abc = ArtificialBeeColony(clf, X_train.columns, X_train, X_test, y_train, y_test, modification_rate, food_num)
         accuracy, selected_features, bee, _ = abc.execute(cycle, score, max_limit)
         # print(score)
         # print(clf.classes_)
@@ -107,6 +107,7 @@ def run_cart_abc(path, t_s):
     # plt.axis([0, 1, 0.6, 0.9])
     # plt.show()
 
+@ignore_warnings(category=ConvergenceWarning)
 def run_cart_kfold(path, n_splits):
     df = load(path)
     features, labels = get_features_labels(df)
@@ -123,13 +124,15 @@ def run_cart_kfold(path, n_splits):
 
     food_num_coef = 0
 
-    while food_num_coef < 0.1:
+    cycle = 1.5
 
-        cycle = 2
+    while cycle < 15:
+
+        cycle = int(cycle * 1.5)
         modification_rate = 0.85
-        food_num_coef += 0.01
+        # food_num_coef += 0.01
         max_limit = 3
-        food_num = 100
+        food_num = 50
 
         for i, (train, test) in enumerate(cv.split(features, labels)):
             probas_ = clf.fit(features.iloc[train], labels.iloc[train]).predict_proba(features.iloc[test])
@@ -147,17 +150,17 @@ def run_cart_kfold(path, n_splits):
         std = np.std(avg_scores)
         y_axis.append(avg)
         y_axis_1.append(std)
-        x_axis.append(food_num_coef)
+        x_axis.append(cycle)
         print(f'Score Average-: {avg}')
     
     plt.plot(x_axis, y_axis)
     plt.ylabel('accuracy')
-    plt.xlabel('food_num_coef')
+    plt.xlabel('cycle')
     plt.show()
 
     plt.plot(x_axis, y_axis_1)
     plt.ylabel('standard deviation')
-    plt.xlabel('food_num_coef')
+    plt.xlabel('cycle')
     plt.show()
 
 @ignore_warnings(category=ConvergenceWarning)
